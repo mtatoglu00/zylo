@@ -2,4 +2,7 @@ Django==5.2.4
 mkdocs-material==9.6.15
 mkdocstrings==0.29.1
 mkdocstrings-python==1.16.12
+numpy==2.3.1
 Pint==0.24.4
+scipy==1.16.0
+sympy==1.14.0
