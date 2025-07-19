@@ -251,25 +251,26 @@ class SymbolicSolver:
                     substituted_eq = substituted_eq.subs(self.symbols[var], sub_expr)
                     if substituted_eq != old_eq:
                         changed = True
-            
+        
             if not changed:
                 break
-    
+
         # Apply known values
         for var, value in known.items():
             if var in self.symbols:
                 substituted_eq = substituted_eq.subs(self.symbols[var], value.magnitude if hasattr(value, 'magnitude') else value)
-    
+
         # Solve for target variable
         target_symbol = self.symbols[solve_for]
         solutions = sp.solve(substituted_eq, target_symbol)
         
+        # Check if we found solutions
+        if not solutions:
             raise ValueError(
                 f"No solution found for '{solve_for}' in equation '{equation_name}'.\n"
                 f"Equation: {equation}\n"
                 f"Known inputs: {known}"
             )
-            raise ValueError(f"No solution found for {solve_for}")
         
         # NUMERICAL EVALUATION: Force evaluation to float
         try:
@@ -278,9 +279,9 @@ class SymbolicSolver:
             # Try simplification if direct conversion fails
             simplified = sp.simplify(solutions[0])
             result = float(simplified.evalf())
-    
+
         # Apply units
         if solve_for in self.unit_map:
             result = result * self.unit_map[solve_for]
-    
+
         return result
