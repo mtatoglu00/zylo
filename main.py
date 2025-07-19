@@ -1,5 +1,5 @@
 from core.physics.mechanics import mechanics
-from core.physics.conversions import conversions, ureg
+from core.physics.conversions import ureg
 
 if __name__ == '__main__':
 
@@ -123,3 +123,6 @@ if __name__ == '__main__':
 
     # Check substitution rules
     #print("Substitution rules:", calc.solver.substitution_rules)
+
+
+    
