@@ -108,7 +108,7 @@ if __name__ == '__main__':
     
     flow = calc.flow_rate(A=0.1*ureg.meter**2, v=5*ureg.meter/ureg.second)
     reynolds = calc.reynolds_number(rho=1000*ureg.kg/ureg.m**3, v=2*ureg.m/ureg.s, 
-                                    d=0.1*ureg.m, mu=0.001*ureg.pascal*ureg.second)
+                                    D=0.1*ureg.m, mu=0.001*ureg.pascal*ureg.second)
     
     print(f"Flow Rate: {flow}"
             f"\nReynolds Number: {reynolds}")
