@@ -1,5 +1,3 @@
-from core.math.geometry import geometry
-from core.physics.mechanics_old import mechanics as mechanics_old
 from core.physics.mechanics import mechanics
 from core.physics.conversions import conversions, ureg
 
