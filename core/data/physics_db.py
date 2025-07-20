@@ -21,12 +21,12 @@ PHYSICS_DB = {
                 'theta': {'units': 'radian', 'description': 'Angle'},
                 'm': {'units': 'kilogram', 'description': 'Mass'},
                 'rho': {'units': 'kilogram/meter**3', 'description': 'Density'},
+                'L': {'units': 'meter', 'description': 'Length'},  # Add this for beam equations
             },
             'equations': {
                 'circle_area': {
                     'expression': 'A = pi * r**2',
-                    'output': 'A',
-                    'inputs': ['r']
+                    'bidirectional': True
                 },
                 'rectangle_area': {
                     'expression': 'A = l * w',
@@ -96,8 +96,7 @@ PHYSICS_DB = {
             'equations': {
                 'force': {
                     'expression': 'F = P * A',
-                    'output': 'F',
-                    'inputs': ['P', 'A']
+                    'bidirectional': True
                 },
                 'stress': {
                     'expression': 'sigma = F / A',

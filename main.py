@@ -42,7 +42,9 @@ if __name__ == '__main__':
     #print("Available equations:", list(calc.solver.equations.keys()))
 
     # Check substitution rules
-    #print("Substitution rules:", calc.solver.substitution_rules)
+    # print("Substitution rules:")
+    # for target, rules in calc.solver.substitution_rules.items():
+    #     print(f"  {target}: {[(rule['sources'], str(rule['expression'])) for rule in rules]}")
 
 
     
@@ -64,4 +66,3 @@ if __name__ == '__main__':
     print("Hydraulic Cylinder Sizing Results:")  
     for k, v in results.items():
         print(f"{k}: {v}")
-    

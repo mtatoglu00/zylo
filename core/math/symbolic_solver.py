@@ -71,20 +71,58 @@ class SymbolicSolver:
         except Exception:
             return ureg.dimensionless
     
+    def _find_substitutions(self, equation_name: str, known: Dict[str, Any]) -> Dict[str, sp.Expr]:
+        equation = self.equations[equation_name]
+        equation_symbols = equation.free_symbols
+        possible_subs = {}
+        calculable = set(known)
+        
+        # Keep iterating until no new substitutions can be found
+        max_iterations = 20  # Prevent infinite loops
+        for iteration in range(max_iterations):
+            changed = False
+            
+            for target, rules in self.substitution_rules.items():
+                if target in calculable:
+                    continue
+                
+                # Try each rule for this target
+                for rule in rules:
+                    if all(source in calculable for source in rule['sources']):
+                        possible_subs[target] = rule['expression']
+                        calculable.add(target)
+                        changed = True
+                        break
+            
+            if not changed:
+                break
+                
+        return possible_subs
+
     def solve_smart(self, equation_name: str, primary_vars: List[str], **kwargs):
         known = {k: v for k, v in kwargs.items() if v is not None}
+        
+        # Get all possible substitutions through deep chaining
         possible_subs = self._find_substitutions(equation_name, known)
+        
+        # Calculate what we can effectively solve
         effective_known = set(known) | set(possible_subs)
         truly_missing = [var for var in primary_vars if var not in effective_known]
-        if len(truly_missing) == 0:
-            solve_candidates = [var for var in primary_vars if var not in known]
-            solve_for = solve_candidates[0] if len(solve_candidates) == 1 else self._determine_best_solve_target(equation_name, solve_candidates, known, possible_subs)
-        elif len(truly_missing) == 1:
+        
+        if len(truly_missing) > 1:
+            raise ValueError(f"Cannot solve. Missing: {truly_missing}, Available subs: {list(possible_subs)}, Known: {list(known)}")
+        
+        # Determine what to solve for
+        if len(truly_missing) == 1:
             solve_for = truly_missing[0]
         else:
-            raise ValueError(f"Cannot solve. Missing: {truly_missing}, Available subs: {list(possible_subs)}")
+            # All variables can be determined - pick the best target
+            solve_candidates = [var for var in primary_vars if var not in known]
+            solve_for = solve_candidates[0] if len(solve_candidates) == 1 else self._determine_best_solve_target(equation_name, solve_candidates, known, possible_subs)
+        
         if solve_for is None:
             raise ValueError(f"Cannot determine what to solve for in equation '{equation_name}'")
+            
         return self._solve(equation_name, known, solve_for)
 
     def _determine_best_solve_target(self, equation_name: str, candidates: List[str], known: Dict, possible_subs: Dict) -> str:
@@ -101,38 +139,6 @@ class SymbolicSolver:
                 return candidate
         return candidates[0] if candidates else None
     
-    def _find_substitutions(self, equation_name: str, known: Dict[str, Any]) -> Dict[str, sp.Expr]:
-        equation = self.equations[equation_name]
-        equation_symbols = equation.free_symbols
-        possible_subs = {}
-        calculable = set(known)
-        changed = True
-        while changed:
-            changed = False
-            for target, rules in self.substitution_rules.items():
-                if target in calculable:
-                    continue
-                target_needed = (self.symbols.get(target) in equation_symbols or
-                                 self._is_intermediate_variable_needed(target, equation_symbols, calculable))
-                if not target_needed:
-                    continue
-                for rule in rules:
-                    if all(source in calculable for source in rule['sources']):
-                        possible_subs[target] = rule['expression']
-                        calculable.add(target)
-                        changed = True
-                        break
-        return possible_subs
-
-    def _is_intermediate_variable_needed(self, target: str, equation_symbols: set, calculable: set) -> bool:
-        for other_target, rules in self.substitution_rules.items():
-            if other_target in calculable:
-                continue
-            if self.symbols.get(other_target) in equation_symbols:
-                if any(target in rule['sources'] for rule in rules):
-                    return True
-        return False
-
     def _solve(self, equation_name: str, known: Dict[str, Any], solve_for: str):
         equation = self.equations[equation_name]
         substituted_eq = equation

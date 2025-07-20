@@ -33,10 +33,25 @@ class AutoSubstitutionDetector:
         symbols = equation.free_symbols
         symbol_names = [str(sym) for sym in symbols]
         
-        # For bidirectional equations, try to solve for each variable
-        for target in symbol_names:
-            other_symbols = [s for s in symbol_names if s != target]
-            self._create_substitution_rule(equation, target, other_symbols)
+        # For bidirectional equations, create all possible solve directions
+        for target_sym in symbols:
+            target = str(target_sym)
+            other_symbols = [str(s) for s in symbols if s != target_sym]
+            
+            try:
+                # Solve the equation for this target
+                solutions = sp.solve(equation, target_sym)
+                if solutions:
+                    priority = 20 - len(other_symbols)  # Fewer sources = higher priority
+                    
+                    self.solver.add_substitution_rule(
+                        target=target,
+                        sources=other_symbols,
+                        expression=solutions[0],
+                        priority=priority
+                    )
+            except Exception:
+                continue
     
     def _create_unidirectional_substitution(self, equation, output, inputs):
         """Create unidirectional substitution rule."""

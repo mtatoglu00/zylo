@@ -33,28 +33,25 @@ class HydraulicCylinderWorkflow:
         self.calc = mechanics("Cylinder Workflow")
 
     def run(self):
-        # Calculate piston area using symbolic solver
-        area = self.calc.solve('force', F=self.force, P=self.pressure).to(ureg.meter**2)
-        
-        # Calculate bore (inner) diameter from area using symbolic solver
-        radius = self.calc.solve('circle_area', A=area).to(ureg.meter)
-        bore_diameter_m = self.calc.solve('diameter', r=radius).to(ureg.meter)
-        bore_diameter_mm = bore_diameter_m.to(ureg.millimeter)
-
-        # Calculate wall thickness using symbolic solver (thin-walled assumption, in mm)
+        # Calculate wall thickness directly - let auto-substitution handle everything
         p_Nmm2 = self.pressure.to(ureg.newton / ureg.millimeter**2)
+        
+        # Single solve call handles the entire chain automatically
         wall_thickness_mm = self.calc.solve(
             'kessel',
             P=p_Nmm2,
-            d=bore_diameter_mm,
+            F=self.force,
             yield_strength=self.material['yield_strength'],
             safety_factor=self.safety_factor
         ).to(ureg.millimeter)
+        
+        # Calculate other needed values using the solver too
+        area = self.calc.solve('force', F=self.force, P=self.pressure).to(ureg.meter**2)
+        bore_diameter_m = self.calc.solve('circle_area', A=area).to(ureg.meter) * 2  # diameter = 2*radius
+        bore_diameter_mm = bore_diameter_m.to(ureg.millimeter)
 
-        # Calculate outer diameter
+        # Rest of calculations stay the same...
         outer_diameter_mm = bore_diameter_mm + 2 * wall_thickness_mm
-
-        # Convert diameters to meters for volume calculation ---
         r_outer_m = (outer_diameter_mm / 2).to(ureg.meter)
         r_inner_m = (bore_diameter_mm / 2).to(ureg.meter)
         wall_volume = (math.pi * self.stroke * (r_outer_m**2 - r_inner_m**2)).to(ureg.meter**3)
