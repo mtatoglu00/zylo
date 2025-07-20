@@ -63,11 +63,11 @@ PHYSICS_DB = {
                     'output': 'V',
                     'inputs': ['l', 'w', 'h']
                 },
-                'diameter_relation': {
+                'diameter': {
                     'expression': 'd = 2 * r',
                     'bidirectional': True
                 },
-                'density_relation': {
+                'density': {
                     'expression': 'rho = m / V',
                     'output': 'rho',
                     'inputs': ['m', 'V']

@@ -36,6 +36,11 @@ drag = calc.drag_force(
 
 print(f"Calculated Drag Force: {drag}")
 
+kessel = calc.solve('kessel',
+                    P=100*ureg.bar,
+                    A=500*ureg.millimeter**2,
+                    )
+
 c_d = calc.solve('drag', rho=1.225*ureg.kg/ureg.m**3, 
                 F_D=230*ureg.newton, 
                 l=2*ureg.meter, 
