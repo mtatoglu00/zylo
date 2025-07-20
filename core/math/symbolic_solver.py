@@ -149,7 +149,11 @@ class SymbolicSolver:
                 break
         for var, value in known.items():
             if var in self.symbols:
-                substituted_eq = substituted_eq.subs(self.symbols[var], value.magnitude if hasattr(value, 'magnitude') else value)
+                # Convert to SI base units before extracting magnitude
+                if hasattr(value, 'to_base_units'):
+                    substituted_eq = substituted_eq.subs(self.symbols[var], value.to_base_units().magnitude)
+                else:
+                    substituted_eq = substituted_eq.subs(self.symbols[var], value)
         target_symbol = self.symbols[solve_for]
         solutions = sp.solve(substituted_eq, target_symbol)
         if not solutions:

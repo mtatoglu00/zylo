@@ -60,3 +60,43 @@ pressure_drop = calc.solve('pipe_pressure_drop',
     mu=0.001*ureg.pascal*ureg.second)       # Viscosity → Re → f
 
 print(f"Pipe Pressure Drop: {pressure_drop}")
+
+# Test: Beam deflection with substitution for I
+beam_deflection = calc.solve('beam_deflection',
+    F=1000*ureg.kilonewton,
+    L=5*ureg.meter,
+    E=200e9*ureg.pascal,
+    b=0.3*ureg.meter,
+    h=0.5*ureg.meter
+)
+print(f"Beam Deflection: {beam_deflection}")
+
+# Test: Beam deflection with substitution for I
+beam_deflection = calc.solve('beam_deflection',
+    F=1000*ureg.newton,
+    L=5*ureg.meter,
+    E=200e9*ureg.pascal,
+    b=0.3*ureg.meter,
+    h=0.5*ureg.meter
+)
+print(f"Beam Deflection: {beam_deflection}")
+
+beam_height = calc.solve('beam_deflection',
+    F=1000*ureg.newton,
+    L=5*ureg.meter,
+    E=200e9*ureg.pascal,
+    b=0.3*ureg.meter,
+    delta=4.17e-6*ureg.meter
+)
+print(f"Beam height: {beam_height.to(ureg.)}")
+
+# Test: Solve for required force given target deflection
+required_force = calc.solve('beam_deflection',
+    delta=0.01*ureg.meter,
+    L=5*ureg.meter,
+    E=200e9*ureg.pascal,
+    b=0.3*ureg.meter,
+    h=0.5*ureg.meter
+)
+print(f"Required Force for Deflection: {required_force}")
+

@@ -85,6 +85,11 @@ PHYSICS_DB = {
                 'sf': {'units': 'dimensionless', 'description': 'Safety factor'},
                 'C_D': {'units': 'dimensionless', 'description': 'Drag coefficient'},
                 'v': {'units': 'meter/second', 'description': 'Velocity'},
+                'delta': {'units': 'meter', 'description': 'Deflection'},
+                'E': {'units': 'pascal', 'description': 'Young\'s modulus'},
+                'I': {'units': 'meter**4', 'description': 'Second moment of area'},
+                'b': {'units': 'meter', 'description': 'Beam width'},
+                'h': {'units': 'meter', 'description': 'Beam height'},
             },
             'equations': {
                 'force': {
@@ -106,6 +111,16 @@ PHYSICS_DB = {
                     'expression': 'F_D = 0.5 * rho * C_D * A * v**2',
                     'output': 'F_D',
                     'inputs': ['rho', 'C_D', 'A', 'v']
+                },
+                'beam_deflection': {
+                    'expression': 'delta = (F * L**3) / (48 * E * I)',
+                    'output': 'delta',
+                    'inputs': ['F', 'L', 'E', 'I']
+                },
+                'second_moment_rect': {
+                    'expression': 'I = (b * h**3) / 12',
+                    'output': 'I',
+                    'inputs': ['b', 'h']
                 },
             }
         },
