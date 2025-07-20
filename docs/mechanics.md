@@ -2,7 +2,6 @@
 
 ::: core.physics.mechanics.mechanics
 
-
 ```mermaid
 graph LR
   A[Start] --> B{Failure?};

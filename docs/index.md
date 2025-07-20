@@ -31,6 +31,7 @@ print(f"Drag: {drag}")
 ```
 
 **Output:**
+
 ```
 Force: 78.53981633974483 newton
 Pressure: 0.1 bar
@@ -48,19 +49,23 @@ Drag: 3.617543940608647 newton
 ## Available Calculations
 
 ### Mechanics
+
 - `force()` - Force calculations: F = P × A
-- `stress()` - Stress analysis: σ = F / A  
+- `stress()` - Stress analysis: σ = F / A
 - `drag_force()` - Drag force: F_D = ½ρC_D A v²
 - `kessel_formula()` - Pressure vessel thickness
 
 ### Fluid Mechanics
+
 - `flow_rate()` - Flow rate: Q = A × v
 - `reynolds_number()` - Reynolds number: Re = ρvd/μ
 
 ### Geometry Support
+
 Automatic substitutions for:
+
 - Circles: A = π×r²
-- Rectangles: A = l×w  
+- Rectangles: A = l×w
 - Triangles: A = ½×l×h
 - Rings: A = π×(r₂² - r₁²)
 - Cylinders: V = π×r²×h
@@ -72,7 +77,7 @@ Automatic substitutions for:
 drag = calc.drag_force(
     m=50*ureg.kg,           # Mass (for density calc)
     V=40*ureg.m**3,         # Volume (ρ = m/V)
-    C_D=0.47,               # Drag coefficient  
+    C_D=0.47,               # Drag coefficient
     r=0.2*ureg.m,           # Radius (A = π×r²)
     v=25*ureg.m/ureg.s      # Velocity
 )
@@ -94,4 +99,3 @@ print(f"Density: {steel['density']}")
 ---
 
 **Simple. Powerful. Extensible.**
-
