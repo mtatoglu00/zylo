@@ -82,7 +82,6 @@ PHYSICS_DB = {
                 'P': {'units': 'pascal', 'description': 'Pressure'},
                 'sigma': {'units': 'pascal', 'description': 'Stress'},
                 't': {'units': 'meter', 'description': 'Thickness'},
-                'sf': {'units': 'dimensionless', 'description': 'Safety factor'},
                 'C_D': {'units': 'dimensionless', 'description': 'Drag coefficient'},
                 'v': {'units': 'meter/second', 'description': 'Velocity'},
                 'delta': {'units': 'meter', 'description': 'Deflection'},
@@ -90,6 +89,9 @@ PHYSICS_DB = {
                 'I': {'units': 'meter**4', 'description': 'Second moment of area'},
                 'b': {'units': 'meter', 'description': 'Beam width'},
                 'h': {'units': 'meter', 'description': 'Beam height'},
+                'yield_strength': {'units': 'pascal', 'description': 'Yield strength'},
+                'safety_factor': {'units': 'dimensionless', 'description': 'Safety factor'},
+                'sigma_allow': {'units': 'pascal', 'description': 'Allowable stress'},
             },
             'equations': {
                 'force': {
@@ -103,9 +105,9 @@ PHYSICS_DB = {
                     'inputs': ['F', 'A']
                 },
                 'kessel': {
-                    'expression': 't = (P * d) / (sigma / sf)',
+                    'expression': 't = (P * d) / (2 * sigma_allow)',
                     'output': 't',
-                    'inputs': ['P', 'd', 'sigma', 'sf']
+                    'inputs': ['P', 'd', 'sigma_allow']
                 },
                 'drag': {
                     'expression': 'F_D = 0.5 * rho * C_D * A * v**2',
@@ -121,6 +123,11 @@ PHYSICS_DB = {
                     'expression': 'I = (b * h**3) / 12',
                     'output': 'I',
                     'inputs': ['b', 'h']
+                },
+                'sigma_allow': {
+                    'expression': 'sigma_allow = yield_strength / safety_factor',
+                    'output': 'sigma_allow',
+                    'inputs': ['yield_strength', 'safety_factor']
                 },
             }
         },

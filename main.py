@@ -2,6 +2,8 @@ from core.physics.mechanics import mechanics
 from core.physics.conversions import ureg
 from core.data.materials_db import MATERIALS_DB
 
+from core.workflow.hydraulic_cylinder_workflow import HydraulicCylinderWorkflow
+
 if __name__ == '__main__':
 
     S355 = MATERIALS_DB['S355']
@@ -43,4 +45,23 @@ if __name__ == '__main__':
     #print("Substitution rules:", calc.solver.substitution_rules)
 
 
+    
+    # Example inputs
+    required_force = 1000 * ureg.kilonewton
+    operating_pressure = 300 * ureg.bar
+    stroke_length = 1.0 * ureg.meter
+    material_name = 'S355'
+    safety_factor = 2.0
+
+    workflow = HydraulicCylinderWorkflow(
+        force=required_force,
+        pressure=operating_pressure,
+        stroke=stroke_length,
+        material_name=material_name,
+        safety_factor=safety_factor
+    )
+    results = workflow.run()
+    print("Hydraulic Cylinder Sizing Results:")  
+    for k, v in results.items():
+        print(f"{k}: {v}")
     
