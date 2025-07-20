@@ -1,6 +1,6 @@
-from core.physics.mechanics import mechanics
-from core.physics.conversions import ureg
-from core.data.materials_db import MATERIALS_DB
+from zylo.core.physics.mechanics import mechanics
+from zylo.core.physics.conversions import ureg
+from zylo.core.data.materials_db import MATERIALS_DB
 import math
 
 class HydraulicCylinderWorkflow:

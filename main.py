@@ -1,8 +1,8 @@
-from core.physics.mechanics import mechanics
-from core.physics.conversions import ureg
-from core.data.materials_db import MATERIALS_DB
+from zylo.core.physics.mechanics import mechanics
+from zylo.core.physics.conversions import ureg
+from zylo.core.data.materials_db import MATERIALS_DB
 
-from core.workflow.hydraulic_cylinder_workflow import HydraulicCylinderWorkflow
+from zylo.core.workflow.hydraulic_cylinder_workflow import HydraulicCylinderWorkflow
 
 if __name__ == '__main__':
 
@@ -32,7 +32,7 @@ if __name__ == '__main__':
 
     print(f"Beam deflection: {deflection}")
     print(f"Volume:  {volume}")
-    
+    print("-------------------------------------------------------------------")    
     # Debugging
 
     # Check what symbols are available

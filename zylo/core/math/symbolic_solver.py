@@ -1,9 +1,9 @@
 import sympy as sp
 import logging
 from typing import Dict, Any, List
-from core.physics.conversions import ureg
-from core.data.physics_db import PHYSICS_DB
-from core.math.auto_substitution_detector import AutoSubstitutionDetector
+from zylo.core.physics.conversions import ureg
+from zylo.core.data.physics_db import PHYSICS_DB
+from zylo.core.math.auto_substitution_detector import AutoSubstitutionDetector
 
 class SymbolicSolver:
     """Enhanced solver with automatic substitution detection."""

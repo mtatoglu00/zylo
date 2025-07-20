@@ -1,4 +1,4 @@
-from core.physics.conversions import ureg
+from zylo.core.physics.conversions import ureg
 
 MATERIALS_DB = {
     "S355": {

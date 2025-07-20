@@ -1,4 +1,4 @@
-from core.math.symbolic_solver import SymbolicSolver
+from zylo.core.math.symbolic_solver import SymbolicSolver
 
 class mechanics:
     """Physics calculator with automatic equation solving."""
