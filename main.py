@@ -1,74 +1,68 @@
-from core.math.geometry import geometry
-from core.physics.mechanics import mechanics
-from core.physics.conversions import conversions, ureg
+from zylo.core.physics.mechanics import mechanics
+from zylo.core.physics.conversions import ureg
+from zylo.core.data.materials_db import MATERIALS_DB
+
+from zylo.core.workflow.hydraulic_cylinder_workflow import HydraulicCylinderWorkflow
 
 if __name__ == '__main__':
 
-    materials = [
-        {"name": "S355", 
-         "yield_strength": 355e6 * ureg.pascal, 
-         "density": 7850 * ureg.kilogram / ureg.meter ** 3, 
-         "young_modulus": 210e9 * ureg.pascal}
-        ]
+    S355 = MATERIALS_DB['S355']
+    print(f"S355 Yield Strength: {S355['yield_strength']}")
 
-    test = mechanics()
-
-    force = 150 #kN
-    pressure = 200 #bar
-    hub = 500 #mm
-
-    inner_diameter = test.diameter(test.force(force=test.convert_force(force, 'kN', 'N'),
-                                    pressure=test.convert_pressure(pressure, 'bar', 'Pa')))
+    print(S355['yield_strength'].to(ureg.megapascal))
     
-    print(test.convert_metric(inner_diameter, 'm', 'mm'), 'mm')
-
-    f = 150 * ureg.kilonewton
     p = 200 * ureg.bar
+    b = 0.3 * ureg.meter
+    h = 0.5 * ureg.meter
     hub = 500 * ureg.millimeter
+    volume = hub * b * h
 
-    fpint = test.force_pint(force=f, pressure=p)
+    mass = S355['density']*volume
 
-    diameter = 2 * (fpint / ureg.pi) ** 0.5
-    diameter = diameter.to(ureg.millimeter)
-    print(f"Diameter: {diameter:~P}")
+    calc = mechanics("My Engineering Calculator")
+
+    print((mass * 9.81*ureg.meter/ureg.second**2).to(ureg.newton))
+
+    deflection = calc.solve('beam_deflection', 
+               F= mass * 9.81*ureg.meter/ureg.second**2,
+               L=hub, 
+               E=S355['yield_strength'], 
+               b=b, 
+               h=h)
+
+    print(f"Beam deflection: {deflection}")
+    print(f"Volume:  {volume}")
+    print("-------------------------------------------------------------------")    
+    # Debugging
+
+    # Check what symbols are available
+    #print("Available symbols:", list(calc.solver.symbols.keys()))
+
+    # Check what equations are loaded
+    #print("Available equations:", list(calc.solver.equations.keys()))
+
+    # Check substitution rules
+    # print("Substitution rules:")
+    # for target, rules in calc.solver.substitution_rules.items():
+    #     print(f"  {target}: {[(rule['sources'], str(rule['expression'])) for rule in rules]}")
+
+
     
-    #print(list(ureg))
-    print(ureg.get_compatible_units('newton'))
-################################################################################
-
-    m = mechanics()
-    pressure = 200 * ureg.bar
-    radius =  diameter
-    allowable_stress = materials[0]["yield_strength"]
+    # Example inputs
+    required_force = 1000 * ureg.kilonewton
+    operating_pressure = 300 * ureg.bar
+    stroke_length = 1.0 * ureg.meter
+    material_name = 'S355'
     safety_factor = 2.0
 
-    thickness = m.kessel_formula(
-        pressure=pressure,
-        diameter=diameter,
-        allowable_stress=allowable_stress,
+    workflow = HydraulicCylinderWorkflow(
+        force=required_force,
+        pressure=operating_pressure,
+        stroke=stroke_length,
+        material_name=material_name,
         safety_factor=safety_factor
     )
-
-    print(f"Required wall thickness: {thickness.to(ureg.millimeter):.2f~P}")
-
-################################################################################
-
-    print(f"The safety is: {m.kessel_formula(
-        thickness= thickness,
-        pressure=pressure,
-        diameter=diameter,
-        allowable_stress=allowable_stress,
-    ):.2f}")
-    
-
-
-test2 = mechanics()
-
-print(test2.name)
-
-n = test2.area(base=10, height=5)
-print(n)
-test2.diameter
-
-print(test2.force(pressure=10000, area=1))
-print(test2.force(pressure=10000, force=10000))
+    results = workflow.run()
+    print("Hydraulic Cylinder Sizing Results:")  
+    for k, v in results.items():
+        print(f"{k}: {v}")
